@@ -1,0 +1,10 @@
+import {useState} from 'react';
+import {Search,X} from 'lucide-react';
+import {categories,filterMenu,priceLabel} from '../data/menu';
+import Picture from '../components/Picture';
+export default function FullMenu({lang,t}){
+ const [category,setCategory]=useState('all'),[query,setQuery]=useState('');
+ const items=filterMenu(category,query);
+ return <section id="menu" className="full-menu section-pad"><div className="menu-heading reveal"><p className="eyebrow">{t.menuKicker}</p><h2>{t.menuTitle}</h2><p>{t.menuText}</p></div><div className="menu-tools"><div className="category-filters" role="group" aria-label={t.menu}>{categories.map(c=><button key={c.id} aria-pressed={category===c.id} onClick={()=>setCategory(c.id)}>{c[lang]}</button>)}</div><div className="search-box"><Search size={18}/><label className="sr-only" htmlFor="menu-search">{t.search}</label><input id="menu-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={t.searchPlaceholder}/>{query&&<button className="icon-button" aria-label={t.clear} onClick={()=>setQuery('')}><X size={18}/></button>}</div></div><div className="menu-meta"><p>{t.demoPrices}</p><span role="status">{new Intl.NumberFormat(lang==='ar'?'ar-EG':'en').format(items.length)} {t.results}</span></div><div className="menu-grid">{items.map(item=><article className="menu-card" key={item.id} data-product-id={item.id}><div className="menu-photo"><Picture src={item.image} alt={item.alt[lang]} width="600" height="600"/>{item.featured&&<span className="menu-tag">{t.signature}</span>}</div><div className="menu-card-top"><h3>{item[lang]}</h3><span>{priceLabel(item.price,lang)}</span></div><p>{item.description[lang]}</p></article>)}</div>{!items.length&&<div className="empty-state"><h3>{t.noResults}</h3><p>{t.noResultsText}</p><button className="button olive" onClick={()=>{setCategory('all');setQuery('')}}>{t.reset}<ArrowReset/></button></div>}<p className="allergen-note">{t.allergens}</p></section>
+}
+function ArrowReset(){return <span aria-hidden="true">↗</span>}
